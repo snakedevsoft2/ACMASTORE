@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirectIfLoggedIn } from "@/lib/auth/session";
+import { getSettings } from "@/lib/settings";
+import { redirect } from "next/navigation";
 import { RegisterForm } from "../auth-forms";
 import { AuthTitle } from "../auth-title";
 
@@ -8,6 +10,7 @@ export const metadata: Metadata = { title: "Crear cuenta", robots: { index: fals
 
 export default async function RegistroPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const sp = await searchParams;
+  if ((await getSettings()).whatsappOnly) redirect("/");
   await redirectIfLoggedIn(sp.next);
   return (
     <>

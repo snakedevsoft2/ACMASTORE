@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/misc";
 import type { CartView } from "@/lib/cart";
 import type { PublicSettings } from "@/lib/settings";
 import { AccountLink, CartButton, CategoriesMenu, MobileMenu, SearchForm, type NavCategory } from "./header-client";
-import { NAV_LINKS } from "./nav-links";
+import { HIDDEN_IN_WHATSAPP_MODE, NAV_LINKS } from "./nav-links";
 import { socialLinks } from "@/components/brand/social-icons";
 import { CartDrawer } from "./cart-drawer";
 
@@ -20,7 +20,8 @@ export function Header({
   userName: string | null;
   cart: CartView;
 }) {
-  const [inicio, tienda, ...rest] = NAV_LINKS;
+  const links = settings.whatsappOnly ? NAV_LINKS.filter((l) => !HIDDEN_IN_WHATSAPP_MODE.includes(l.href)) : NAV_LINKS;
+  const [inicio, tienda, ...rest] = links;
   return (
     <>
       {settings.announcement && (
@@ -30,7 +31,7 @@ export function Header({
       )}
       <header className="sticky top-0 z-40 border-b border-line bg-ink/90 backdrop-blur-md supports-[backdrop-filter]:bg-ink/75">
         <Container className="flex h-[72px] items-center gap-2 lg:h-20 lg:gap-6">
-          <MobileMenu categories={categories} userName={userName} socials={socialLinks(settings)} />
+          <MobileMenu categories={categories} userName={userName} socials={socialLinks(settings)} simple={settings.whatsappOnly} />
           <Link href="/" className="shrink-0" aria-label={`${settings.storeName} — inicio`}>
             <Logo logoUrl={settings.logoUrl} storeName={settings.storeName} className="size-14 lg:size-16" priority />
           </Link>
@@ -54,7 +55,7 @@ export function Header({
           </Suspense>
 
           <div className="ml-auto flex items-center gap-1 md:ml-0">
-            <AccountLink name={userName} />
+            {!settings.whatsappOnly && <AccountLink name={userName} />}
             <CartButton count={cart.count} />
           </div>
         </Container>

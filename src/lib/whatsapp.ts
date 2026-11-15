@@ -5,7 +5,7 @@ export function whatsappLink(number: string, text?: string): string {
   return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }
 
-export type WhatsAppIntent = "separar" | "asesoria" | "consultar";
+export type WhatsAppIntent = "comprar" | "separar" | "asesoria" | "consultar";
 
 /** Mensaje para separar o consultar un producto concreto. */
 export function productMessage(opts: {
@@ -19,8 +19,8 @@ export function productMessage(opts: {
   const item = `${opts.name}${opts.variant ? ` (${opts.variant})` : ""}`;
   const qty = opts.quantity && opts.quantity > 1 ? `${opts.quantity} unidades de ` : "";
   const head =
-    opts.intent === "separar"
-      ? `Hola ACMA STORE 👋 Quiero separar ${qty}${item}${opts.price ? ` – ${opts.price}` : ""}.`
+    opts.intent === "separar" || opts.intent === "comprar"
+      ? `Hola ACMA STORE 👋 Quiero ${opts.intent} ${qty}${item}${opts.price ? ` – ${opts.price}` : ""}.`
       : opts.intent === "consultar"
         ? `Hola ACMA STORE 👋 ¿Me confirman disponibilidad de ${item}?`
         : `Hola ACMA STORE 👋 Quiero asesoría sobre ${item}.`;

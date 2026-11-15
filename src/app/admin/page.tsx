@@ -70,10 +70,14 @@ export default async function DashboardPage() {
 
   const checklist = [
     { done: products > 0, label: "Registrar productos", href: "/admin/productos/nuevo" },
-    { done: shippingCount > 0, label: "Configurar al menos un método de envío", href: "/admin/configuracion/envios" },
-    { done: paymentsAvailable > 0, label: "Activar al menos un método de pago", href: "/admin/configuracion/pagos" },
+    ...(settings.whatsappOnly
+      ? []
+      : [
+          { done: shippingCount > 0, label: "Configurar al menos un método de envío", href: "/admin/configuracion/envios" },
+          { done: paymentsAvailable > 0, label: "Activar al menos un método de pago", href: "/admin/configuracion/pagos" },
+        ]),
     { done: pagesPending === 0, label: `Redactar páginas legales e informativas (${pagesPending} pendientes)`, href: "/admin/paginas" },
-    { done: Boolean(settings.whatsapp), label: "Agregar el WhatsApp de ventas (activa “Separar” y “Asesoría”)", href: "/admin/configuracion" },
+    { done: Boolean(settings.whatsapp), label: settings.whatsappOnly ? "Agregar el WhatsApp de ventas (sin él no se pueden recibir pedidos)" : "Agregar el WhatsApp de ventas (activa “Separar” y “Asesoría”)", href: "/admin/configuracion" },
     { done: Boolean(settings.instagramUrl || settings.facebookUrl), label: "Conectar Instagram y Facebook", href: "/admin/configuracion" },
     { done: Boolean(settings.contactEmail && settings.contactPhone), label: "Completar datos de contacto", href: "/admin/configuracion" },
     { done: isEmailConfigured(), label: "Configurar correo SMTP (variables de entorno)", href: "/admin/configuracion" },

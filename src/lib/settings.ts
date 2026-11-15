@@ -32,6 +32,7 @@ export type PublicSettings = Pick<
   | "currency"
   | "locale"
   | "announcement"
+  | "whatsappOnly"
 >;
 
 export function toPublicSettings(s: StoreSettings): PublicSettings {
@@ -52,5 +53,6 @@ export function toPublicSettings(s: StoreSettings): PublicSettings {
     currency: s.currency,
     locale: s.locale,
     announcement: s.announcement,
+    whatsappOnly: s.whatsappOnly,
   };
 }

@@ -11,6 +11,7 @@ import { OrderError, placeOrder, startOnlinePayment } from "@/lib/orders";
 import { isOnlineProvider } from "@/lib/payments";
 import { PaymentProviderError } from "@/lib/payments/types";
 import { checkoutSchema, invalid, type ActionState } from "@/lib/validation";
+import { getSettings } from "@/lib/settings";
 
 async function clientKey() {
   const h = await headers();
@@ -46,6 +47,7 @@ export async function fixCartAction() {
 }
 
 export async function placeOrderAction(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  if ((await getSettings()).whatsappOnly) return { ok: false, error: "Los pedidos se envían por WhatsApp desde el carrito." };
   const rl = rateLimit(`order:${await clientKey()}`, 10, 10 * 60_000);
   if (!rl.ok) return { ok: false, error: "Demasiados intentos seguidos. Espera unos minutos e intenta de nuevo." };
 

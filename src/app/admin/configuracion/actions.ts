@@ -54,6 +54,7 @@ const settingsSchema = z.object({
   gaMeasurementId: z.union([z.literal(""), z.string().trim().regex(/^G-[A-Z0-9]+$/, "Formato G-XXXXXXX")]).transform((v) => v || null),
   googleAdsId: z.union([z.literal(""), z.string().trim().regex(/^AW-\d+$/, "Formato AW-123456789")]).transform((v) => v || null),
   googleAdsPurchaseLabel: optText(60),
+  whatsappOnly: z.preprocess((v) => v === "on", z.boolean()),
   metaPixelId: z.union([z.literal(""), z.string().trim().regex(/^\d{8,20}$/, "El ID del Pixel son solo números")]).transform((v) => v || null),
   seoTitle: optText(70),
   seoDescription: optText(170),

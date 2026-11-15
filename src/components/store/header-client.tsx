@@ -9,7 +9,7 @@ import { useStore } from "./store-provider";
 import { cn } from "@/lib/utils";
 import { BrandEmblem } from "@/components/brand/logo";
 import { SocialIcon, type SocialName } from "@/components/brand/social-icons";
-import { NAV_LINKS } from "./nav-links";
+import { HIDDEN_IN_WHATSAPP_MODE, NAV_LINKS } from "./nav-links";
 
 export type NavCategory = { id: string; name: string; slug: string; children: { id: string; name: string; slug: string }[] };
 
@@ -108,7 +108,17 @@ export function CategoriesMenu({ categories }: { categories: NavCategory[] }) {
 
 export type SocialLink = { name: SocialName; label: string; url: string };
 
-export function MobileMenu({ categories, userName, socials = [] }: { categories: NavCategory[]; userName: string | null; socials?: SocialLink[] }) {
+export function MobileMenu({
+  categories,
+  userName,
+  socials = [],
+  simple = false,
+}: {
+  categories: NavCategory[];
+  userName: string | null;
+  socials?: SocialLink[];
+  simple?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -147,7 +157,7 @@ export function MobileMenu({ categories, userName, socials = [] }: { categories:
             </button>
           </div>
           <ul className="space-y-1">
-            {NAV_LINKS.map((l) => (
+            {NAV_LINKS.filter((l) => !simple || !HIDDEN_IN_WHATSAPP_MODE.includes(l.href)).map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="block rounded-lg px-3 py-2.5 font-medium text-white hover:bg-white/5 hover:text-acma">
                   {l.label}
@@ -181,11 +191,13 @@ export function MobileMenu({ categories, userName, socials = [] }: { categories:
               </div>
             </div>
           )}
-          <div className="mt-auto border-t border-line pt-4">
-            <Link href={userName ? "/cuenta" : "/cuenta/ingresar"} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-white hover:bg-white/5">
-              <User className="size-5" /> {userName ? "Mi cuenta" : "Ingresar / Registrarme"}
-            </Link>
-          </div>
+          {!simple && (
+            <div className="mt-auto border-t border-line pt-4">
+              <Link href={userName ? "/cuenta" : "/cuenta/ingresar"} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-white hover:bg-white/5">
+                <User className="size-5" /> {userName ? "Mi cuenta" : "Ingresar / Registrarme"}
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
     </>

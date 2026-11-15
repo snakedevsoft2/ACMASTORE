@@ -69,6 +69,9 @@ async function fillCheckout(page, d) {
 const money = (s) => Number(String(s).replace(/[^\d]/g, ""));
 
 try {
+  // Las pruebas de compra en línea corren con el modo "solo WhatsApp" desactivado.
+  await db.storeSettings.update({ where: { id: 1 }, data: { whatsappOnly: false } });
+
   // ───────────────────────────── ADMINISTRADOR ─────────────────────────────
   section("Panel de administración");
   const adminCtx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
@@ -461,6 +464,34 @@ try {
   assert(feed.includes(`/producto/${productA.slug}`), "el producto está en el feed");
   assert(feed.includes("<g:price>420000.00 COP</g:price><g:sale_price>350000.00 COP</g:sale_price>"), "precio y precio de oferta en el feed");
   ok("Feed de productos para Google Merchant / Meta con precio y oferta");
+
+  // ─────────────────────── MODO SOLO WHATSAPP (tienda sencilla) ───────────────────────
+  section("Modo solo WhatsApp");
+  await db.storeSettings.update({ where: { id: 1 }, data: { whatsappOnly: true } });
+  const w = await (await browser.newContext({ viewport: { width: 1366, height: 900 } })).newPage();
+  await w.goto(BASE);
+  assert((await w.getByRole("link", { name: /Ingresar/ }).count()) === 0, "no debe haber enlace Ingresar");
+  const buy = w.locator("#catalogo-panel").getByRole("link", { name: /^Comprar .+ por WhatsApp$/ }).first();
+  const buyHref = decodeURIComponent((await buy.getAttribute("href")) ?? "");
+  assert(buyHref.startsWith("https://wa.me/573000000000") && buyHref.includes("Quiero comprar"), `Comprar abre WhatsApp: ${buyHref}`);
+  ok("Sin “Ingresar”; “Comprar” abre WhatsApp con el producto y el precio");
+
+  await w.goto(`${BASE}/producto/${productU.slug}`);
+  await w.getByRole("link", { name: /^Comprar .+ por WhatsApp$/ }).first().waitFor();
+  assert((await w.getByRole("button", { name: "Comprar ahora" }).count()) === 0, "sin checkout en la ficha");
+  await w.getByRole("button", { name: "Agregar al carrito" }).click();
+  const drawerLink = w.getByRole("dialog", { name: "Carrito de compras" }).getByRole("link", { name: "Enviar pedido por WhatsApp" });
+  await drawerLink.waitFor();
+  const orderHref = decodeURIComponent((await drawerLink.getAttribute("href")) ?? "");
+  assert(orderHref.includes("Quiero hacer este pedido") && orderHref.includes(`Producto sin inventario ${RUN}`), "pedido completo en el mensaje");
+  ok("Ficha: Comprar por WhatsApp + carrito; el carrito envía el pedido completo por WhatsApp");
+
+  await w.goto(`${BASE}/checkout`);
+  assert(new URL(w.url()).pathname === "/carrito", "el checkout redirige al carrito");
+  await w.goto(`${BASE}/cuenta/registro`);
+  assert(new URL(w.url()).pathname === "/", "el registro no está disponible");
+  ok("Checkout y registro de clientes desactivados en modo WhatsApp");
+  await db.storeSettings.update({ where: { id: 1 }, data: { whatsappOnly: false } });
 
   console.log(`\n✅ ${n} verificaciones superadas. Capturas en ${SHOTS}`);
 } catch (err) {

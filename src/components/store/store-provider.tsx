@@ -8,6 +8,8 @@ type StoreCtx = {
   storeName: string;
   /** Número de WhatsApp de ventas (null si no está configurado). */
   whatsapp: string | null;
+  /** Modo de venta "solo WhatsApp": sin cuentas ni pago en línea. */
+  whatsappOnly: boolean;
   cartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
@@ -22,11 +24,13 @@ export function StoreProvider({
   money,
   storeName,
   whatsapp,
+  whatsappOnly,
   children,
 }: {
   money: MoneyFormat;
   storeName: string;
   whatsapp: string | null;
+  whatsappOnly: boolean;
   children: ReactNode;
 }) {
   const [cartOpen, setCartOpen] = useState(false);
@@ -43,12 +47,13 @@ export function StoreProvider({
       money,
       storeName,
       whatsapp,
+      whatsappOnly,
       cartOpen,
       openCart: () => setCartOpen(true),
       closeCart: () => setCartOpen(false),
       toast,
     }),
-    [money, storeName, whatsapp, cartOpen, toast],
+    [money, storeName, whatsapp, whatsappOnly, cartOpen, toast],
   );
 
   return (

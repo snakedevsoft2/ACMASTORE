@@ -18,7 +18,7 @@ export default async function CheckoutPage() {
     db.shippingMethod.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { priceCents: "asc" }] }),
     getAvailablePaymentMethods(),
   ]);
-  if (cart.lines.length === 0 || cart.hasIssues) redirect("/carrito");
+  if (settings.whatsappOnly || cart.lines.length === 0 || cart.hasIssues) redirect("/carrito");
 
   const addresses = user
     ? await db.address.findMany({ where: { userId: user.id }, orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }] })

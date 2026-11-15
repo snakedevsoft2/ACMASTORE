@@ -58,7 +58,9 @@ export default async function HomePage() {
                 <h1 id="catalogo-title" className="font-display text-2xl font-extrabold uppercase italic leading-none sm:text-4xl">
                   Nuestros <span className="text-acma">productos</span>
                 </h1>
-                <p className="hidden text-sm text-silver sm:block">Compra en línea o sepáralos por WhatsApp</p>
+                <p className="hidden text-sm text-silver sm:block">
+                  {settings.whatsappOnly ? "Elige tus productos y pídelos por WhatsApp" : "Compra en línea o sepáralos por WhatsApp"}
+                </p>
               </div>
               <CatalogTabs categories={categories.map(({ slug, name, count }) => ({ slug, name, count }))} products={catalog} money={money} />
             </Container>
@@ -77,12 +79,16 @@ export default async function HomePage() {
             money={money}
             href="/tienda?ofertas=1"
           />
-          <WhatsAppBand whatsapp={settings.whatsapp} />
-          <ProductSection id="mas-vendidos" eyebrow="Favoritos" title="Más vendidos" products={sections.bestSellers} money={money} href="/tienda?orden=popular" />
+          {!settings.whatsappOnly && (
+            <>
+              <WhatsAppBand whatsapp={settings.whatsapp} />
+              <ProductSection id="mas-vendidos" eyebrow="Favoritos" title="Más vendidos" products={sections.bestSellers} money={money} href="/tienda?orden=popular" />
+            </>
+          )}
         </>
       )}
 
-      <Benefits />
+      {!settings.whatsappOnly && <Benefits />}
       <SocialFollow settings={pub} />
       <Testimonials items={testimonials} />
     </>

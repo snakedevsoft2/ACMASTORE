@@ -87,12 +87,14 @@ export default async function CarritoPage() {
               </div>
               <div className="flex justify-between">
                 <dt className="text-silver">Envío</dt>
-                <dd className="text-silver">Se calcula en el checkout</dd>
+                <dd className="text-silver">{settings.whatsappOnly ? "Se coordina por WhatsApp" : "Se calcula en el checkout"}</dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-silver">Cupón de descuento</dt>
-                <dd className="text-silver">En el checkout</dd>
-              </div>
+              {!settings.whatsappOnly && (
+                <div className="flex justify-between">
+                  <dt className="text-silver">Cupón de descuento</dt>
+                  <dd className="text-silver">En el checkout</dd>
+                </div>
+              )}
             </dl>
             <div className="mt-5 flex justify-between border-t border-line pt-5 text-lg font-bold">
               <span>Subtotal</span>
@@ -102,11 +104,26 @@ export default async function CarritoPage() {
               <Button className="mt-6 w-full" size="lg" disabled>
                 Ajusta el carrito para continuar
               </Button>
+            ) : settings.whatsappOnly ? (
+              <WhatsAppLink
+                intent="comprar"
+                message={cartMessage(
+                  cart.lines.map((l) => ({ name: l.productName, variant: l.variantName, quantity: l.quantity, total: fmt(l.lineTotalCents) })),
+                  fmt(cart.subtotalCents),
+                )}
+                className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-lg bg-acma text-base font-bold text-white transition-colors hover:bg-acma-dark"
+              >
+                <WhatsAppGlyph className="size-6" /> Enviar pedido por WhatsApp
+              </WhatsAppLink>
             ) : (
               <ButtonLink href="/checkout" size="lg" className="mt-6 w-full">
                 Continuar con la compra
               </ButtonLink>
             )}
+            {settings.whatsappOnly && !settings.whatsapp && !cart.hasIssues && (
+              <p className="mt-4 text-sm text-silver">Muy pronto podrás enviar tu pedido por WhatsApp.</p>
+            )}
+            {!settings.whatsappOnly && (
             <WhatsAppLink
               intent="asesoria"
               message={cartMessage(
@@ -117,6 +134,7 @@ export default async function CarritoPage() {
             >
               <WhatsAppGlyph className="size-5 text-acma" /> Enviar pedido por WhatsApp
             </WhatsAppLink>
+            )}
           </aside>
         </div>
       )}

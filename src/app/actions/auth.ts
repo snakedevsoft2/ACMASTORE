@@ -11,6 +11,7 @@ import { generateToken, hashToken } from "@/lib/auth/tokens";
 import { mergeGuestCart } from "@/lib/cart";
 import { sendPasswordResetEmail } from "@/lib/order-emails";
 import { siteUrl } from "@/lib/utils";
+import { getSettings } from "@/lib/settings";
 import {
   addressSchema,
   changePasswordSchema,
@@ -35,6 +36,7 @@ function safeNext(value: FormDataEntryValue | null, fallback: string): string {
 }
 
 export async function registerAction(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  if ((await getSettings()).whatsappOnly) return { error: "El registro no está disponible: los pedidos se hacen por WhatsApp." };
   const rl = rateLimit(`register:${await ip()}`, 5, 60 * 60_000);
   if (!rl.ok) return { error: "Demasiados registros desde esta conexión. Intenta más tarde." };
 

@@ -22,6 +22,17 @@ export function StoreSettingsForm({ s, feedUrl }: { s: StoreSettings; feedUrl: s
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-6">
       <FormMessage state={state} />
+      <Section title="Modo de venta">
+        <div className="sm:col-span-2">
+          <Checkbox
+            name="whatsappOnly"
+            defaultChecked={s.whatsappOnly}
+            label="Solo WhatsApp: el cliente arma su pedido y lo envía por WhatsApp. Sin cuentas de cliente ni pago en línea (tienda sencilla)."
+          />
+          <p className="mt-2 text-xs text-silver-dim">Desmárcalo para activar cuentas de cliente, checkout y pagos en línea (Mercado Pago, Stripe, transferencia, contra entrega).</p>
+        </div>
+      </Section>
+
       <Section title="Información de la tienda">
         <Field label="Nombre de la tienda" name="storeName" error={e.storeName} required>
           <Input name="storeName" defaultValue={s.storeName} error={e.storeName} />

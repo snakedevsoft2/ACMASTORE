@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/misc";
 import { discountPercent } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { useCartActions } from "./product-actions";
-import { useMoney } from "./store-provider";
+import { useMoney, useStore } from "./store-provider";
 import { WhatsAppGlyph, WhatsAppLink } from "./whatsapp";
 
 export type PurchaseVariant = {
@@ -34,6 +34,7 @@ export function ProductPurchase({
 }) {
   const fmt = useMoney();
   const { add, buyNow, pending } = useCartActions();
+  const { whatsappOnly } = useStore();
   const initial = variants.find(canSell) ?? variants[0];
   const [selected, setSelected] = useState<Record<string, string>>(initial?.options ?? {});
   const [qty, setQty] = useState(1);
@@ -167,6 +168,17 @@ export function ProductPurchase({
           Agregar al carrito
         </Button>
       </div>
+      {whatsappOnly ? (
+        <WhatsAppLink
+          intent={canBuy ? "comprar" : "consultar"}
+          product={waProduct}
+          className={buttonClass("primary", "lg", "h-14 w-full text-base")}
+          ariaLabel={`${canBuy ? "Comprar" : "Consultar"} ${product.name} por WhatsApp`}
+        >
+          <WhatsAppGlyph className="size-6" />
+          {canBuy ? "Comprar por WhatsApp" : "Consultar por WhatsApp"}
+        </WhatsAppLink>
+      ) : (
       <div className="grid gap-3 sm:grid-cols-2">
         <Button size="lg" className="w-full" disabled={!canBuy || pending} onClick={() => variant && buyNow(variant.id, qty, tracked)}>
           <Zap className="size-5" /> Comprar ahora
@@ -181,10 +193,13 @@ export function ProductPurchase({
           {canBuy ? "Separar por WhatsApp" : "Consultar por WhatsApp"}
         </WhatsAppLink>
       </div>
-      <WhatsAppLink intent="asesoria" product={waProduct} className="inline-flex items-center gap-2 text-sm text-silver hover:text-white">
-        <MessageCircleQuestion className="size-4 text-acma" />
-        ¿Tienes dudas? <span className="font-semibold text-white underline decoration-acma underline-offset-4">Pide asesoría por WhatsApp</span>
-      </WhatsAppLink>
+      )}
+      {!whatsappOnly && (
+        <WhatsAppLink intent="asesoria" product={waProduct} className="inline-flex items-center gap-2 text-sm text-silver hover:text-white">
+          <MessageCircleQuestion className="size-4 text-acma" />
+          ¿Tienes dudas? <span className="font-semibold text-white underline decoration-acma underline-offset-4">Pide asesoría por WhatsApp</span>
+        </WhatsAppLink>
+      )}
 
       {/* Barra fija en celular: precio + compra en un toque */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-ink/95 px-4 py-3 backdrop-blur lg:hidden">
@@ -193,18 +208,31 @@ export function ProductPurchase({
             <p className="truncate text-xs text-silver">{product.name}</p>
             <p className="text-lg font-extrabold leading-tight">{fmt(price)}</p>
           </div>
-          <WhatsAppLink
-            intent={canBuy ? "separar" : "consultar"}
-            product={waProduct}
-            ariaLabel="Separar por WhatsApp"
-            className={buttonClass("secondary", "md", "px-3")}
-          >
-            <WhatsAppGlyph className="size-5 text-acma" />
-          </WhatsAppLink>
-          <Button size="md" disabled={!canBuy || pending} onClick={() => variant && buyNow(variant.id, qty, tracked)}>
-            {pending ? <Loader2 className="size-4 animate-spin" /> : <Zap className="size-4" />}
-            Comprar
-          </Button>
+          {whatsappOnly ? (
+            <>
+              <Button variant="secondary" size="md" className="px-3" disabled={!canBuy || pending} onClick={() => variant && add(variant.id, qty, tracked)} aria-label="Agregar al carrito">
+                <CartIcon className="size-6" />
+              </Button>
+              <WhatsAppLink intent={canBuy ? "comprar" : "consultar"} product={waProduct} ariaLabel="Comprar por WhatsApp" className={buttonClass("primary", "md")}>
+                <WhatsAppGlyph className="size-5" /> Comprar
+              </WhatsAppLink>
+            </>
+          ) : (
+            <>
+              <WhatsAppLink
+                intent={canBuy ? "separar" : "consultar"}
+                product={waProduct}
+                ariaLabel="Separar por WhatsApp"
+                className={buttonClass("secondary", "md", "px-3")}
+              >
+                <WhatsAppGlyph className="size-5 text-acma" />
+              </WhatsAppLink>
+              <Button size="md" disabled={!canBuy || pending} onClick={() => variant && buyNow(variant.id, qty, tracked)}>
+                {pending ? <Loader2 className="size-4 animate-spin" /> : <Zap className="size-4" />}
+                Comprar
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>

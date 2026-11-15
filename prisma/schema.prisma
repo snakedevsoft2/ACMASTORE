@@ -486,6 +486,8 @@ model StoreSettings {
   locale         String   @default("es-CO")
   country        String   @default("Colombia")
   announcement   String?
+  // Modo de venta: true = los clientes piden por WhatsApp (sin cuentas ni pago en línea).
+  whatsappOnly   Boolean  @default(true)
   lowStockThreshold Int   @default(5)
   gaMeasurementId   String?
   googleAdsId       String?

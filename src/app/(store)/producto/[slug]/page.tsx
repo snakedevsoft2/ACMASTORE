@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const priceText = formatMoney(minPrice, { currency: settings.currency, locale: settings.locale });
   const description =
     p.seoDescription ||
-    `${p.name} por ${priceText}${p.category ? ` en ${p.category.name}` : ""}. ${p.shortDescription ?? "Compra en línea o sepáralo por WhatsApp."} ${settings.storeName}: ${settings.slogan.toLowerCase()}.`.slice(0, 300);
+    `${p.name} por ${priceText}${p.category ? ` en ${p.category.name}` : ""}. ${p.shortDescription ?? (settings.whatsappOnly ? "Pídelo por WhatsApp." : "Compra en línea o sepáralo por WhatsApp.")} ${settings.storeName}: ${settings.slogan.toLowerCase()}.`.slice(0, 300);
   return {
     title: p.seoTitle || `${p.name} – ${priceText}`,
     description,
@@ -125,6 +125,12 @@ export default async function ProductPage({ params }: Props) {
               <ProductPurchase product={{ id: product.id, name: product.name, slug: product.slug, category: cat?.name ?? null }} options={options} variants={variants} />
             </div>
 
+            {settings.whatsappOnly ? (
+              <p className="mt-6 flex items-center gap-3 rounded-xl border border-line bg-carbon p-4 text-sm text-silver">
+                <Truck className="size-5 shrink-0 text-acma" />
+                Disponibilidad, envío y forma de pago se confirman por WhatsApp.
+              </p>
+            ) : (
             <ul className="mt-8 grid gap-3 rounded-xl border border-line bg-carbon p-5 text-sm text-silver">
               <li className="flex items-center gap-3">
                 <Truck className="size-5 shrink-0 text-acma" />
@@ -143,6 +149,7 @@ export default async function ProductPage({ params }: Props) {
                 </Link>
               </li>
             </ul>
+            )}
           </div>
         </div>
 

@@ -10,6 +10,7 @@ import { db } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { getSettings } from "@/lib/settings";
 import { formatDate, orderNumber, parseOrderNumber } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Seguimiento de pedido",
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
 
 export default async function SeguimientoPage({ searchParams }: { searchParams: Promise<{ pedido?: string; correo?: string }> }) {
   const sp = await searchParams;
+  if ((await getSettings()).whatsappOnly) redirect("/");
   const numberInput = (sp.pedido ?? "").slice(0, 20);
   const email = (sp.correo ?? "").trim().toLowerCase().slice(0, 160);
   const searched = Boolean(numberInput || email);

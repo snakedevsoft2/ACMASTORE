@@ -64,7 +64,7 @@ const small = "h-9 px-2 text-xs sm:text-sm";
 /** Acciones de la tarjeta de producto: comprar, carrito y separar por WhatsApp. */
 export function CardActions({ product: p }: { product: CardProduct }) {
   const { add, buyNow, pending } = useCartActions();
-  const { whatsapp } = useStore();
+  const { whatsapp, whatsappOnly } = useStore();
   const fmt = useMoney();
   const href = `/producto/${p.slug}`;
   const item = { id: p.id, name: p.name, category: p.categoryName, priceCents: p.priceCents };
@@ -76,6 +76,34 @@ export function CardActions({ product: p }: { product: CardProduct }) {
       {label}
     </WhatsAppLink>
   );
+
+  if (whatsappOnly) {
+    return (
+      <div className={cn("grid gap-2", pending && "pointer-events-none opacity-70")}>
+        {p.available ? (
+          <WhatsAppLink intent="comprar" product={waProduct} ariaLabel={`Comprar ${p.name} por WhatsApp`} className={buttonClass("primary", "sm", cn(small, "w-full"))}>
+            <WhatsAppGlyph className="size-5" /> Comprar
+          </WhatsAppLink>
+        ) : (
+          whatsapp && waButton("consultar", "Consultar")
+        )}
+        {p.available && p.quickAddVariantId ? (
+          <button
+            type="button"
+            onClick={() => add(p.quickAddVariantId!, 1, item)}
+            className={buttonClass("secondary", "sm", cn(small, "w-full"))}
+            aria-label={`Agregar ${p.name} al carrito`}
+          >
+            <CartIcon className="size-5" /> Agregar al carrito
+          </button>
+        ) : (
+          <Link href={href} className={buttonClass("secondary", "sm", cn(small, "w-full"))}>
+            {p.available ? "Elegir opciones" : "Ver producto"}
+          </Link>
+        )}
+      </div>
+    );
+  }
 
   if (!p.available) {
     return (

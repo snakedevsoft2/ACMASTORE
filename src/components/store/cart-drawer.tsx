@@ -14,7 +14,7 @@ import { useMoney, useStore } from "./store-provider";
 import { cn } from "@/lib/utils";
 
 export function CartDrawer({ cart }: { cart: CartView }) {
-  const { cartOpen, closeCart } = useStore();
+  const { cartOpen, closeCart, whatsappOnly, whatsapp } = useStore();
   const fmt = useMoney();
 
   useEffect(() => {
@@ -89,6 +89,33 @@ export function CartDrawer({ cart }: { cart: CartView }) {
                 <span className="text-silver">Subtotal</span>
                 <span className="font-semibold">{fmt(cart.subtotalCents)}</span>
               </div>
+              {whatsappOnly ? (
+                <>
+                  <p className="text-xs text-silver-dim">Confirmamos disponibilidad, envío y forma de pago por WhatsApp.</p>
+                  {cart.hasIssues ? (
+                    <Link href="/carrito" onClick={closeCart} className={buttonClass("secondary", "lg", "w-full")}>
+                      Revisar carrito
+                    </Link>
+                  ) : whatsapp ? (
+                    <WhatsAppLink
+                      intent="comprar"
+                      message={cartMessage(
+                        cart.lines.map((l) => ({ name: l.productName, variant: l.variantName, quantity: l.quantity, total: fmt(l.lineTotalCents) })),
+                        fmt(cart.subtotalCents),
+                      )}
+                      className={buttonClass("primary", "lg", "w-full")}
+                    >
+                      <WhatsAppGlyph className="size-5" /> Enviar pedido por WhatsApp
+                    </WhatsAppLink>
+                  ) : (
+                    <p className="text-sm text-silver">Muy pronto podrás enviar tu pedido por WhatsApp.</p>
+                  )}
+                  <Link href="/carrito" onClick={closeCart} className="block text-center text-sm text-silver hover:text-white">
+                    Ver carrito
+                  </Link>
+                </>
+              ) : (
+              <>
               <p className="text-xs text-silver-dim">Envío y descuentos se calculan en el checkout.</p>
               <div className="grid grid-cols-2 gap-3">
                 <Link href="/carrito" onClick={closeCart} className={buttonClass("secondary")}>
@@ -112,6 +139,8 @@ export function CartDrawer({ cart }: { cart: CartView }) {
               >
                 <WhatsAppGlyph className="size-4 text-acma" /> O envía tu pedido por WhatsApp
               </WhatsAppLink>
+              </>
+              )}
             </div>
           </>
         )}

@@ -15,7 +15,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   const hasAnalytics = Boolean(settings.gaMeasurementId || settings.googleAdsId || settings.metaPixelId);
 
   return (
-    <StoreProvider money={{ currency: settings.currency, locale: settings.locale }} storeName={settings.storeName} whatsapp={settings.whatsapp}>
+    <StoreProvider money={{ currency: settings.currency, locale: settings.locale }} storeName={settings.storeName} whatsapp={settings.whatsapp} whatsappOnly={settings.whatsappOnly}>
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-lg focus:bg-acma focus:px-4 focus:py-2">
         Saltar al contenido
       </a>

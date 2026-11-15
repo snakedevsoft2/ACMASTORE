@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     s.seoDescription ||
     (list
-      ? `Compra en línea ${list} en ${s.storeName}. ${s.slogan.charAt(0) + s.slogan.slice(1).toLowerCase()}: compra fácil, paga seguro y recibe rápido. Asesoría por WhatsApp.`
+      ? `Compra en línea ${list} en ${s.storeName}. ${s.slogan.charAt(0) + s.slogan.slice(1).toLowerCase()}: ${s.whatsappOnly ? "pide por WhatsApp y recibe rápido." : "compra fácil, paga seguro y recibe rápido. Asesoría por WhatsApp."}`
       : `${s.storeName}: ${s.slogan.toLowerCase()}. Compra fácil, recibe rápido, con confianza y calidad.`);
   const verificationOther: Record<string, string> = {};
   if (s.facebookDomainVerification) verificationOther["facebook-domain-verification"] = s.facebookDomainVerification;

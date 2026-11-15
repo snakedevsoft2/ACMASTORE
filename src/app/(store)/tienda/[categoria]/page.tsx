@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     getSettings(),
   ]);
   const from = stats._min.priceCents != null ? formatMoney(stats._min.priceCents, { currency: settings.currency, locale: settings.locale }) : null;
-  const description = `${cat.name} en ${settings.storeName}: ${stats._count} productos${from ? ` desde ${from}` : ""}. ${cat.description ?? ""} Compra en línea o sepáralos por WhatsApp.`.replace(/\s+/g, " ").trim();
+  const description = `${cat.name} en ${settings.storeName}: ${stats._count} productos${from ? ` desde ${from}` : ""}. ${cat.description ?? ""} ${settings.whatsappOnly ? "Pídelos por WhatsApp." : "Compra en línea o sepáralos por WhatsApp."}`.replace(/\s+/g, " ").trim();
   return {
     title: `${cat.name}${from ? ` desde ${from}` : ""}`,
     description,

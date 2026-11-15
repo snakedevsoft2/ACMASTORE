@@ -4,6 +4,8 @@ import { logoutAction } from "@/app/actions/auth";
 import { Container } from "@/components/ui/misc";
 import { can } from "@/lib/auth/permissions";
 import { requireUser } from "@/lib/auth/session";
+import { getSettings } from "@/lib/settings";
+import { redirect } from "next/navigation";
 
 const links = [
   { href: "/cuenta", label: "Resumen", icon: LayoutDashboard },
@@ -14,6 +16,8 @@ const links = [
 
 export default async function CuentaLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
+  // En modo WhatsApp los clientes no tienen cuenta; el personal usa el panel.
+  if (user.role === "CUSTOMER" && (await getSettings()).whatsappOnly) redirect("/");
   return (
     <Container className="py-10">
       <div className="mb-8">

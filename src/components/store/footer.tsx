@@ -35,6 +35,29 @@ const columns = [
   },
 ];
 
+/** Versión sencilla para la tienda que vende por WhatsApp. */
+const simpleColumns = [
+  {
+    title: "ACMA STORE",
+    links: [
+      { href: "/tienda", label: "Tienda" },
+      { href: "/tienda?ofertas=1", label: "Ofertas" },
+      { href: "/nosotros", label: "Nosotros" },
+      { href: "/contacto", label: "Contacto" },
+    ],
+  },
+  {
+    title: "Ayuda",
+    links: [
+      { href: "/preguntas-frecuentes", label: "Preguntas frecuentes" },
+      { href: "/politica-de-envios", label: "Política de envíos" },
+      { href: "/politica-de-devoluciones", label: "Política de devoluciones" },
+      { href: "/politica-de-privacidad", label: "Política de privacidad" },
+      { href: "/terminos-y-condiciones", label: "Términos y condiciones" },
+    ],
+  },
+];
+
 export function Footer({ settings }: { settings: PublicSettings }) {
   const socials = socialLinks(settings);
   const year = new Date().getFullYear();
@@ -96,7 +119,7 @@ export function Footer({ settings }: { settings: PublicSettings }) {
           )}
         </div>
 
-        {columns.map((col) => (
+        {(settings.whatsappOnly ? simpleColumns : columns).map((col) => (
           <nav key={col.title} aria-label={col.title}>
             <h2 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-white">{col.title}</h2>
             <ul className="space-y-2.5">

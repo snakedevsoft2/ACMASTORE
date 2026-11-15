@@ -6,3 +6,6 @@ export const NAV_LINKS = [
   { href: "/seguimiento", label: "Seguimiento" },
   { href: "/contacto", label: "Contacto" },
 ];
+
+/** Enlaces que no aplican cuando la tienda vende solo por WhatsApp. */
+export const HIDDEN_IN_WHATSAPP_MODE = ["/tienda?orden=nuevos", "/seguimiento"];
