@@ -30,14 +30,33 @@ export function normalizeDbEnv({ requireDb }) {
   loadDotEnv(env);
   const first = (...names) => names.map((n) => env[n]).find((v) => typeof v === "string" && v.trim() !== "");
 
-  const pooled = first("DATABASE_URL", "POSTGRES_PRISMA_URL", "POSTGRES_URL", "NEON_DATABASE_URL");
-  const direct = first("DATABASE_URL_UNPOOLED", "DATABASE_URL_NON_POOLING", "POSTGRES_URL_NON_POOLING", "NEON_DATABASE_URL_UNPOOLED") ?? pooled;
+  // Cualquier variable cuyo valor sea una conexión Postgres (cubre prefijos personalizados de Vercel).
+  const pgVars = Object.entries(env).filter(([, v]) => typeof v === "string" && /^postgres(ql)?:\/\//i.test(v.trim()));
+  const isDirect = (k) => /UNPOOLED|NON_POOLING|DIRECT/i.test(k);
+
+  const pooled =
+    first("DATABASE_URL", "POSTGRES_PRISMA_URL", "POSTGRES_URL", "NEON_DATABASE_URL") ??
+    pgVars.find(([k]) => !isDirect(k) && !/NO_SSL/i.test(k))?.[1] ??
+    pgVars[0]?.[1];
+  const direct =
+    first("DATABASE_URL_UNPOOLED", "DATABASE_URL_NON_POOLING", "POSTGRES_URL_NON_POOLING", "NEON_DATABASE_URL_UNPOOLED") ??
+    pgVars.find(([k]) => isDirect(k))?.[1] ??
+    pooled;
+
+  if (requireDb && pgVars.length) {
+    console.log(`Variables de base de datos detectadas: ${pgVars.map(([k]) => k).join(", ")}`);
+  }
 
   if (!pooled) {
     if (requireDb) {
+      // Solo nombres (nunca valores) para diagnosticar sin exponer secretos.
+      const related = Object.keys(env)
+        .filter((k) => /DATABASE|POSTGRES|^PG|NEON|STORAGE|BLOB|ADMIN|CRON/i.test(k))
+        .sort();
       console.error(
-        "\n✖ No se encontró la base de datos (DATABASE_URL).\n" +
-          "  En Vercel: pestaña Storage → conecta la base Neon a este proyecto (Production) y vuelve a desplegar.\n",
+        "\n✖ No se encontró la base de datos (ninguna variable con una conexión postgres://).\n" +
+          "  En Vercel: pestaña Storage → conecta la base Neon a este proyecto (Production) y vuelve a desplegar.\n" +
+          `  Variables relacionadas visibles en este build: ${related.length ? related.join(", ") : "ninguna"}\n`,
       );
       process.exit(1);
     }
