@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* ───────────── Identidad ACMA STORE ─────────────
+   Negro profundo #050505 · Rojo ACMA #E50914 · Plateado #BFC3C9
+   Blanco #FFFFFF · Gris carbón #1A1A1A · Rojo oscuro #99000B */
+@theme {
+  --color-ink: #050505;
+  --color-ink-soft: #0d0d0d;
+  --color-carbon: #1a1a1a;
+  --color-carbon-light: #222222;
+  --color-line: #2a2a2a;
+  --color-line-strong: #3a3a3a;
+  --color-acma: #e50914;
+  --color-acma-dark: #99000b;
+  --color-silver: #bfc3c9;
+  --color-silver-dim: #8b9097;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --animate-fade-up: fade-up 0.5s ease-out both;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-ink);
+    color: #ffffff;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-acma);
+    color: #ffffff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-acma);
+    outline-offset: 2px;
+  }
+  input[type="number"]::-webkit-inner-spin-button {
+    opacity: 0.4;
+  }
+}
+
+@layer components {
+  .metal-text {
+    background: linear-gradient(180deg, #ffffff 0%, #bfc3c9 55%, #8b9097 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .red-glow {
+    box-shadow: 0 0 0 1px rgb(229 9 20 / 0.4), 0 8px 30px -8px rgb(229 9 20 / 0.55);
+  }
+  .card-surface {
+    background: var(--color-carbon);
+    border: 1px solid var(--color-line);
+  }
+  /* Texto enriquecido de páginas (Nosotros, políticas, FAQ). */
+  .prose-acma {
+    color: var(--color-silver);
+    line-height: 1.75;
+  }
+  .prose-acma h2 {
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .prose-acma h3 {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .prose-acma p { margin: 0 0 1rem; }
+  .prose-acma ul { list-style: disc; padding-left: 1.25rem; margin: 0 0 1rem; }
+  .prose-acma li { margin: 0.25rem 0; }
+  .prose-acma li::marker { color: var(--color-acma); }
+  .prose-acma strong { color: #ffffff; }
+  .prose-acma a { color: #ffffff; text-decoration: underline; text-decoration-color: var(--color-acma); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,14 @@
+# Secretos locales: las variables de producción se definen en el panel de Vercel.
+.env
+.env.*
+!.env.example
+
+# Archivos locales y generados
+node_modules
+.next
+storage
+coverage
+*.tsbuildinfo
+
+# Fotos originales del catálogo (se importan con npm run db:import-catalog)
+imagenes de catalogo

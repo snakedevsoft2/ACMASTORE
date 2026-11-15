@@ -1,0 +1,6 @@
+# Finales de línea uniformes (Vercel compila en Linux)
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary

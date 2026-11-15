@@ -1,0 +1,18 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Variables de entorno (solo se versiona .env.example)
+.env
+.env.*
+!.env.example
+
+# Imágenes subidas por el administrador
+storage/
+
+.DS_Store
+npm-debug.log*
